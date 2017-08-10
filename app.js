@@ -1,26 +1,40 @@
 var express = require('express');
-var stormpath = require('express-stormpath');
 var path = require('path');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
-
 var app = express();
+
+require( './db' );
+require('./auth');
+var passport = require('passport');
+
+
+var users = require('./routes/users');
+var routes = require('./routes/index');
+var session = require('express-session');
+var sessionOptions = {
+  secret: 'secret cookie thang (store this elsewhere!)',
+  resave: true,
+  saveUninitialized: true
+};
+app.use(session(sessionOptions));
+
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-// uncomment after placing your favicon in /public
+app.use(passport.initialize());
+app.use(passport.session());
 
- 
-// app.on('stormpath.ready', function () {
-//   console.log('Stormpath Ready');
-// });
- 
-// app.listen(3000);
+// uncomment after placing your favicon in /public
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -29,6 +43,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 
+// app.use (stormpath.init(app, {
+//   application: {
+//     href: "https://api.stormpath.com/v1/applications/4ISnjB6WwfJr3riHrMOLv"
+//   },
+//   website: true,
+
+// }))
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -36,38 +59,11 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(stormpath.init(app, {
-  client: {
-    apiKey: {
-      id: '1CY1WC7Z3NTQNELBYC8568VI4',
-      secret: 'BAfuL35LnjTD4kZtCHWJiRodTz9KIgzKa+9Rouuj47o',
-    }
-  },
-  application: {
-    href: 'https://api.stormpath.com/v1/applications/4ISnjB6WwfJr3riHrMOLv'
-  }
-}));
- 
-app.on('stormpath.ready', function () {
-  console.log('Stormpath Ready');
+app.use(function(req, res, next){
+  res.locals.user = req.user;
+  next();
 });
 
-// app.use(stormpath.init(app, {
-//   apiKeyFile: process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + '/.stormpath/apiKey.properties',
-//   secretKey: 'BAfuL35LnjTD4kZtCHWJiRodTz9KIgzKa+9Rouuj47o',
-//   application: 'https://api.stormpath.com/v1/applications/4ISnjB6WwfJr3riHrMOLv',
-// }));
-
-// app.get('/', function(req, res) {
-//   res.send('home page!');
-// });
-
-// app.get('/secret', function(req, res) {
-//   res.send('secret page!');
-// });
-
-app.listen(4000);
 
 // error handlers
 
@@ -92,6 +88,24 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+// app.on ('stormpath.ready', function () {
+  
+// })
+
+// app.get('/dashboard', stormpath.loginRequired, function(req, res) {
+//   res.send('If you can see this page, you must be logged into your account!');
+// });
 
 
 module.exports = app;

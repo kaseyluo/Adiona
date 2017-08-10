@@ -14,7 +14,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">Adiona</a>
+      <a class="navbar-brand" href="/">Adiona</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -27,6 +27,7 @@
         </li>
         <li role="separator" class="divider"></li>
         <li id = "headerbutton2"><a href="/map" aria-pressed="true">Map</a></li>
+        <!-- <li id = "headerbutton3"><a href="/safemap" aria-pressed="true">Safe Zones</a></li> -->
         <!-- <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
           <ul class="dropdown-menu">
@@ -47,15 +48,16 @@
         <button type="submit" class="btn btn-default">Submit</button>
       </form> -->
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Profile</a></li>
-        <li class="dropdown">
+        <li><a href="/profile">Profile</a></li>
+        <!-- <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account<span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">Login</a></li>
-            <li><a href="#">Logout</a></li>
-            <li><a href="/registerpage">Register</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+          <ul class="dropdown-menu"> -->
+          {{#if login}}
+            <li><a href="/logout">Logout</a></li>
+          {{else}}
+            <li><a href="/login">Login</a></li>
+          {{/if}}  
+            
           </ul>
         </li>
       </ul>
