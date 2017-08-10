@@ -3,3 +3,5 @@ Adiona is a web-app prototype that ensures safe commutes, especially for young w
 There is also a map button that allows the user to see locations of nearby police stations and safe zones, so that he/she can make smart decisions as they commute. 
 
 Adiona was created during the Girls Who Code Summer Immersion Program at AT&T 2016 as a final project. 
+
+To run, navigate into /bin and run "node www" or "nodemon www."
